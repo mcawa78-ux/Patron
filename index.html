@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Патрон</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef4ef;color:#18392d;margin:0;padding:20px}
+main{max-width:500px;margin:auto}
+section{background:white;padding:18px;border-radius:14px;margin:14px 0}
+input,textarea,button{box-sizing:border-box;width:100%;padding:12px;margin:6px 0;border-radius:8px;font-size:16px}
+input,textarea{border:1px solid #bbb}
+button{background:#245b43;color:white;border:0}
+.item{padding:12px;border-bottom:1px solid #ddd}
+small{display:block;color:#555;margin:5px 0}
+</style>
+</head>
+<body>
+<main>
+<h1>🧭 Патрон</h1>
+<p>Твій особистий помічник</p>
+<section>
+<h2>Додати подію</h2>
+<input id="name" placeholder="Назва події">
+<input id="date" type="date">
+<textarea id="note" placeholder="Нотатка"></textarea>
+<button onclick="add()">Зберегти подію</button>
+</section>
+<section>
+<h2>Мої події</h2>
+<div id="events"></div>
+</section>
+<section>
+<small>Безплатна версія. Записи зберігаються в браузері на цьому пристрої. Автоматичні сповіщення поки не налаштовані.</small>
+</section>
+</main>
+<script>
+const key='patron_events';
+let events=[];
+try{events=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
+function show(){
+const box=document.getElementById('events');
+box.replaceChildren();
+events.forEach((e,i)=>{
+const item=document.createElement('div');
+item.className='item';
+const title=document.createElement('b');
+title.textContent=e.name;
+const date=document.createElement('small');
+date.textContent=e.date;
+const note=document.createElement('p');
+note.textContent=e.note;
+const del=document.createElement('button');
+del.textContent='Видалити';
+del.onclick=()=>{events.splice(i,1);save()};
+item.append(title,date,note,del);
+box.append(item);
+});
+}
+function save(){
+localStorage.setItem(key,JSON.stringify(events));
+show();
+}
+function add(){
+const name=document.getElementById('name').value.trim();
+if(!name){alert('Введи назву події');return}
+events.push({name,date:document.getElementById('date').value,note:document.getElementById('note').value});
+save();
+document.getElementById('name').value='';
+document.getElementById('date').value='';
+document.getElementById('note').value='';
+}
+show();
+</script>
+</body>
+</html>
